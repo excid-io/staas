@@ -1,0 +1,97 @@
+﻿@using Excid.Staas.Models
+@model SignedItem
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Sign" asp-action="Index">Home</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Sign" asp-action="List">Signatures</a></li>
+        <li class="breadcrumb-item active">Details</li>
+    </ol>
+</nav>
+<h2 class="fw-normal">Details</h2>
+<hr />
+<p>
+    This is the information maintained in our system about the singed item. You can 
+    <a asp-controller="Sign" asp-action="Download" asp-route-id="@Model.Id">download</a> 
+    this information as a bundle
+</p>
+<div class="accordion" id="accordionPanelsStayOpenExample">
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panel-basic" aria-expanded="true" aria-controls="panel-basic">
+                Basic information
+            </button>
+        </h2>
+        <div id="panel-basic" class="accordion-collapse collapse show">
+            <div class="accordion-body">
+                <p>
+                    <b>Comment: </b> @Model.Comment <br/>
+                    <b>Signed by: </b> @Model.Signer <br />
+                    <b>Signed at: </b> @Model.SignedAt.ToLocalTime().ToString("dd MMMM yyyy, HH:mm:ss") <br />
+                </p>  
+            </div>
+        </div>
+    </div>
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panel-signature" aria-expanded="false" aria-controls="panel-signature">
+                Signature
+            </button>
+        </h2>
+        <div id="panel-signature" class="accordion-collapse collapse">
+            <div class="accordion-body">
+                <code class="text-break">
+                @Model.Signature
+                </code>
+            </div>
+        </div>
+    </div>
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panel-ca-certificate" aria-expanded="false" aria-controls="panel-ca-certificatee">
+                CA Certificate
+            </button>
+        </h2>
+        <div id="panel-ca-certificate" class="accordion-collapse collapse">
+            <div class="accordion-body">
+                <code class="text-break" style="white-space: pre-line">@Model.CAKey</code>
+            </div>
+        </div>
+    </div>
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panel-certificate" aria-expanded="false" aria-controls="panel-certificatee">
+                Certificate
+            </button>
+        </h2>
+        <div id="panel-certificate" class="accordion-collapse collapse">
+            <div class="accordion-body">
+                <code class="text-break" style="white-space: pre-line">@Model.Certificate</code>
+            </div>
+        </div>
+    </div>
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panel-rekor-uuid" aria-expanded="false" aria-controls="panel-rekor-uuid">
+                Rekor UUID
+            </button>
+        </h2>
+        <div id="panel-rekor-uuid" class="accordion-collapse collapse">
+            <div class="accordion-body">
+                <code class="text-break">@Model.RekorLogEntryUUID</code>
+            </div>
+        </div>
+    </div>
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panel-rekor-entry" aria-expanded="false" aria-controls="panel-rekor-entry">
+                Rekor entry
+            </button>
+        </h2>
+        <div id="panel-rekor-entry" class="accordion-collapse collapse">
+            <div class="accordion-body">
+                <code class="text-break language-javascript">@Model.RekorLogEntry</code>
+            </div>
+        </div>
+    </div>
+</div>

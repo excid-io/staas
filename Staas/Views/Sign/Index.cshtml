@@ -1,0 +1,29 @@
+﻿@using System.Security.Claims
+
+<h2 class="fw-normal">Control Panel</h2>
+<hr/>
+<div class="container mt-2">
+    <a class="btn btn-default btn-control-panel" asp-action="Create" asp-controller="Sign">
+        <img src="/img/sign.svg" alt="New signature" height="50"><br /> Sign
+    </a>
+    <a class="btn btn-default btn-control-panel" asp-action="List" asp-controller="Sign">
+        <img src="/img/activity.svg" alt="Activity" height="50"><br /> Activity
+    </a>
+</div>
+<div class="container mt-2">
+    <div class="alert alert-success" role="alert">
+        <h4 class="alert-heading">Welcome!</h4>
+        <p>Our system uses the <a href="https://rekor.sigstore.dev/">public Rekor service.</a></p>
+        <p>You can monitor the Rekor service for entries from your email 
+            using <a href="https://github.com/sigstore/rekor-monitor/">rekor-monitor</a> and the following monitored values:</p>
+        <code>
+<pre>
+certIdentities:
+- certSubject: @User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value
+    issuers:
+    - @ViewData["issuer"]
+</pre>
+        </code>
+        <p>You can download the certificate of our Fulcio CA certificate <a asp-action="Certificate" asp-controller="Sign">here</a></p>
+    </div>
+</div>
