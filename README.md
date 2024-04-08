@@ -61,7 +61,7 @@ fulcio serve \
     --ct-log-url=""
 ```
 
-### StaaS platfrom
+### StaaS platform
 STaaS platform is implemented using .net 8.0
 
 #### Preparation
