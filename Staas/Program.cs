@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.AspNetCore.HttpOverrides;
 using Excid.Staas.Data;
 using Excid.Staas.Security;
+using Staas.Security;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<IJwtSigner, FileJwtSigner>();
+builder.Services.AddSingleton<IRegistrySigner, RekorRegistrySigner>();
 builder.Services.AddScoped<ISecureDbAccess, SecureDbAccess>();
 builder.Services.AddDbContext<StassDbContext>(options => options.UseSqlite("Data Source=staas.db"));
 builder.Services.AddAuthentication(options =>

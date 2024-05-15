@@ -12,13 +12,14 @@
 <hr />
 <div class="row">
     <div class="col-md-6">
+        <div class="form-group mb-3">
+            <label for="fileToHash" class="control-label mb-1">Select file to sign</label>
+            <input type="file" id="fileToHash" onchange="javascript:hashFile();" class="form-control" />
+            <span asp-validation-for="HashBase64" class="text-danger"></span>
+        </div>
         <form enctype="multipart/form-data" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group mb-3">
-                <label asp-for="Data" class="control-label mb-1"></label>
-                <input asp-for="Data" class="form-control" />
-                <span asp-validation-for="Data" class="text-danger"></span>
-            </div>
+            <input type="hidden" asp-for="HashBase64"/>
             <div class="form-group mb-3">
                 <label asp-for="Comment" class="control-label mb-1"></label>
                 <input asp-for="Comment" class="form-control" />
@@ -37,3 +38,29 @@
         </ul>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        function ab2str(buf) {
+            return String.fromCharCode.apply(null, new Uint8Array(buf));
+        }
+
+        function hashFile() {
+            var input = document.getElementById("fileToHash");
+            var hidden = document.getElementById("HashBase64");
+            if (input.files.length === 0) {
+                return;
+            }
+            var fileReader = new FileReader();
+            fileReader.onload = async function () {
+                result = new Uint8Array(fileReader.result);
+                hash = await window.crypto.subtle.digest('SHA-256', result);
+                const hashAsString = ab2str(hash);
+                const hashAsBase64 = window.btoa(hashAsString);
+                alert(hashAsBase64)
+                hidden.value=hashAsBase64
+            };
+            fileReader.readAsArrayBuffer(input.files[0]);
+        }
+    </script>
+}

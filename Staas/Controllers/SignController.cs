@@ -11,6 +11,7 @@ using Excid.Staas.Data;
 using Excid.Sigstore.Rekor.v1.Models;
 using Excid.Staas.Security;
 using Excid.Sigstore.Fulcio.v2.Models;
+using Staas.Security;
 
 namespace idp.Controllers
 {
@@ -20,23 +21,17 @@ namespace idp.Controllers
 		private readonly ILogger<SignController> _logger;
 		private readonly IConfiguration _configuration;
         private readonly ISecureDbAccess _secureDbAccess;
-        private readonly IJwtSigner _jwtSigner;
-        private readonly string _fulcioURL = string.Empty;
+        private readonly IRegistrySigner _registrySigner;
         private readonly string _issuer = string.Empty;
 
-        public SignController(IConfiguration configuration, ILogger<SignController> logger, StassDbContext context, ISecureDbAccess secureDbAccess, IJwtSigner jwtSigner)
+        public SignController(IConfiguration configuration, ILogger<SignController> logger, StassDbContext context, ISecureDbAccess secureDbAccess, IRegistrySigner registrySigner)
 		{
 			_logger = logger;
 			_configuration = configuration;
             _secureDbAccess = secureDbAccess;
-            _jwtSigner = jwtSigner;
-            _fulcioURL = _configuration.GetValue<string>("Sigstore:FulcioURL") ?? string.Empty;
+            _registrySigner = registrySigner;
             _issuer = _configuration.GetValue<string>("IdP:iss") ?? string.Empty;
-            if (_fulcioURL == string.Empty)
-            {
-                _logger.LogError("Error in initalizing SignController: Fulcio URL was not provided in the configuration");
-                throw new StaasException("Error in initializing, Fulcio URL was not provided in the configuration");
-            }
+
         }
 
         public IActionResult Index()
@@ -97,131 +92,20 @@ namespace idp.Controllers
                 _logger.LogError("Error in parsing id token: identity token does not inlcude an email");
                 throw new StaasException("Error in parsing id token: identity token does not inlcude am email");
             }
-            
-            signedItem.SignedAt = DateTime.UtcNow;
-			signedItem.Signer = signer;
-			signedItem.Comment = signRequestForm.Comment ?? string.Empty;
-            var ecdsa = ECDsa.Create(); // generate asymmetric key pair
-            var httpClient = new HttpClient();
-            httpClient.Timeout = TimeSpan.FromSeconds(2);
-            /*
-			 * Prepare OIDC token
-			 */
-            var iat = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-            var exp = DateTimeOffset.UtcNow.AddDays(1).ToUnixTimeSeconds();
-            var iss = _configuration.GetValue<string>("IdP:iss");
-            var jwtpayload = new JwtPayload()
-                {
-                    { "iat", iat },
-                    { "exp", exp },
-                    { "iss", iss ?? ""},
-                    {"aud", "sigstore" },
-                    {"email_verified", true },
-                    {"email", signer }
-
-            };
-
-            var token = _jwtSigner.GetSignedJWT(jwtpayload);
-            /*
-			 * Request certificate
-			 */
-            string certificate;
             try
-			{
-                var req = new CertificateRequest("cn="+ signer, ecdsa, HashAlgorithmName.SHA256);
-                var csr = req.CreateSigningRequest();
-                string pem = new string(PemEncoding.Write("CERTIFICATE REQUEST", csr));
-                var signingCertificateRequest = new SigningCertificateRequest()
-                {
-                    Credentials = new Credentials()
-                    {
-                        OidcIdentityToken = token
-                    },
-                    CertificateSigningRequest = Convert.ToBase64String(Encoding.ASCII.GetBytes(pem))
-                };
+            {
+                byte[] hash = Convert.FromBase64String(signRequestForm.HashBase64);
+                signedItem = await _registrySigner.SignFileHash(signer, hash, signRequestForm.Comment);
                 /*
-                 * Invoke Fulcio
+                 * Update the database
                  */
-                var postRequest = await httpClient.PostAsJsonAsync(_fulcioURL + "/api/v2/signingCert", signingCertificateRequest);
-                var signingCertificateResponse = await postRequest.Content.ReadFromJsonAsync<SigningCertificateResponse>();
-                certificate = signingCertificateResponse!.SignedCertificateDetachedSct.Chain.Certificates[0];
-				var caKey = signingCertificateResponse!.SignedCertificateDetachedSct.Chain.Certificates[1];
-                signedItem.Certificate = certificate;
-				signedItem.CAKey = caKey;
-            }
-			catch (Exception ex)
-			{
-				_logger.LogError("Exception in requesting certificate:" + ex.ToString());
-				throw new StaasException("Error in requesting certificate");
-			}
-			/*
-             * Sign file
-             */
-			byte[]? data;
-            byte[]? signature;
-            try
-			{
-                var memoryStream = new MemoryStream();
-                await signRequestForm.Data.CopyToAsync(memoryStream);
-                data = memoryStream.ToArray();
-                signature = ecdsa.SignData(data, HashAlgorithmName.SHA256,
-                DSASignatureFormat.Rfc3279DerSequence);
-				signedItem.Signature = Convert.ToBase64String(signature);
-            }
-            catch (Exception ex)
-			{
-                _logger.LogError("Exception in generating signature:" + ex.ToString());
-                throw new StaasException("Error in generating singature");
-            }
-            /*
-            * Store in Rekor
-            */
-            try
+                await _secureDbAccess.AddSignedItem(signedItem);
+                return RedirectToAction("List");
+            }catch(Exception ex)
             {
-                SHA256 sha256 = SHA256.Create();
-                byte[] digest = sha256.ComputeHash(data);
-                var hashedRekord = new HashedRekord()
-                {
-                    Spec = new Spec()
-                    {
-                        Signature = new Signature()
-                        {
-                            Content = Convert.ToBase64String(signature),
-                            PublicKey = new Excid.Sigstore.Rekor.v1.Models.PublicKey()
-                            {
-                                Content = Convert.ToBase64String((Encoding.ASCII.GetBytes(certificate)))
-                            }
-                        },
-                        Data = new Data()
-                        {
-                            Hash = new Hash()
-                            {
-                                Algorithm = "sha256",
-                                Value = Convert.ToHexString(digest).ToLower()
-                            }
-                        }
-                    }
-                };
-                var postRequest = await httpClient.PostAsJsonAsync("https://rekor.sigstore.dev" + "/api/v1/log/entries", hashedRekord);
-                var entries = await postRequest.Content.ReadFromJsonAsync<Dictionary<string, LogEntry>>();
-				//assume a single entry
-				if (entries != null && entries.Count > 0)
-				{
-					var entry = entries.First();
-					signedItem.RekorLogEntryUUID = entry.Key;
-					signedItem.RekorLogEntry = JsonSerializer.Serialize(entry.Value);
-				}
+                _logger.LogError("Exception in signing file:" + ex.ToString());
+                throw new StaasException("Error in signing file");
             }
-            catch (Exception ex)
-            {
-                _logger.LogError("Exception in storing to the Transparency Registry:" + ex.ToString());
-                throw new StaasException("Error in storing to the Transparency Registry");
-            }
-            /*
-			 * Update the database
-			 */
-            await _secureDbAccess.AddSignedItem(signedItem);
-            return RedirectToAction("List");
         }
 
         public IActionResult Details(int? id)
