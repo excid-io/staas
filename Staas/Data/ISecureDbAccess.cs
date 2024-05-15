@@ -10,6 +10,7 @@ namespace Excid.Staas.Data
         public List<SignedItem>? ListSignedItems(AccessLevel accessLevel = AccessLevel.WRITE);
         public Task<bool> AddAPIToken(APIToken entry);
         public APIToken? GetAPIToken(int? id, AccessLevel accessLevel = AccessLevel.WRITE);
+        public APIToken? GetAPITokenbyValue(string value);
         public List<APIToken>? ListAPITokens(AccessLevel accessLevel = AccessLevel.WRITE);
         public Task<bool> DeleteAPIToken(int? id);
     }

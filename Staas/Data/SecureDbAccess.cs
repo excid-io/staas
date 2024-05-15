@@ -74,6 +74,15 @@ namespace Excid.Staas.Data
         }
 
         /*
+         * Get an API token without any access control
+         */
+        public APIToken? GetAPITokenbyValue(string value)
+        {
+            var entry = _context.APITokens.Where(m => m.Token == value).FirstOrDefault();
+            return entry;
+        }
+
+        /*
          * Get a list of signed items that belong to the user
          */
         public List<SignedItem>? ListSignedItems(AccessLevel accessLevel)
