@@ -24,7 +24,7 @@ namespace idp.Controllers
         private readonly IRegistrySigner _registrySigner;
         private readonly string _issuer = string.Empty;
 
-        public SignController(IConfiguration configuration, ILogger<SignController> logger, StassDbContext context, ISecureDbAccess secureDbAccess, IRegistrySigner registrySigner)
+        public SignController(IConfiguration configuration, ILogger<SignController> logger, ISecureDbAccess secureDbAccess, IRegistrySigner registrySigner)
 		{
 			_logger = logger;
 			_configuration = configuration;

@@ -112,7 +112,7 @@ dotnet ef database update
 First run the STaaS platform .net code by executing from the `STaas` folder
 
 ```
-dotnet run --environment
+dotnet run
 ```
 Then execute Fulcio. Supposedly, Fulcio keys are
 stored in `/etc/fulcio-config/` Fulcio can be started using the 

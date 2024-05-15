@@ -57,7 +57,6 @@
                 hash = await window.crypto.subtle.digest('SHA-256', result);
                 const hashAsString = ab2str(hash);
                 const hashAsBase64 = window.btoa(hashAsString);
-                alert(hashAsBase64)
                 hidden.value=hashAsBase64
             };
             fileReader.readAsArrayBuffer(input.files[0]);

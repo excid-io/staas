@@ -1,0 +1,52 @@
+﻿@using Excid.Staas.Models
+@model IEnumerable<APIToken>
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Sign" asp-action="Index">Home</a></li>
+        <li class="breadcrumb-item active">API tokens</li>
+    </ol>
+</nav>
+<h2 class="fw-normal">API tokens</h2>
+<hr />
+@if (Model is not null && Model.Count() > 0)
+{
+    <p>
+        These are the API tokens you have generated. You can <a asp-action="Create">create</a> a new one.
+    </p>
+
+    <table class="table table-hover mt-5">
+        <thead>
+            <tr>
+                <th style="width: 30%" scope="col">Token</th>
+                <th style="width: 20%" scope="col">Description</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.Token)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Description)</td>
+                    <td>
+                        <div class="btn-toolbar" role="toolbar">
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="me-3">
+                                <img src="/img/delete.svg" alt="delete" title="Delete" height="25">
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="alert alert-primary d-flex align-items-center" role="alert">
+        <div>
+            You haven't generated any API token. <a asp-action="Create">Create</a> a new one
+            and it will be displayed here.
+        </div>
+    </div>
+}

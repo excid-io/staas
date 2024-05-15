@@ -13,5 +13,6 @@ namespace Excid.Staas.Data
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
            => optionsBuilder.LogTo(Console.WriteLine, LogLevel.Warning);
         public DbSet<SignedItem> SignedItems { get; set; }
+        public DbSet<APIToken> APITokens { get; set; }
     }
 }
