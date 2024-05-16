@@ -42,7 +42,8 @@ namespace Staas.Controllers
                  * Update the database
                  */
                 await _secureDbAccess.AddSignedItem(signedItem);
-                return CreatedAtAction(nameof(Download), new { id = signedItem.Id }, signedItem);
+                string bundle = JsonSerializer.Serialize(signedItem.CosignBundle);
+                return CreatedAtAction(nameof(Download), new { id = signedItem.Id }, bundle);
             }catch (Exception ex)
             {
                 _logger.LogError("Exception in API/Sign:" + ex.ToString());
