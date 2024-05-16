@@ -1,19 +1,12 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
-using System.IdentityModel.Tokens.Jwt;
 using System.Text.Json;
-using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Security.Claims;
 using Excid.Staas.Models;
 using Excid.Staas.Data;
-using Excid.Sigstore.Rekor.v1.Models;
-using Excid.Staas.Security;
-using Excid.Sigstore.Fulcio.v2.Models;
 using Staas.Security;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 using System.Net.Http.Headers;
 
@@ -167,49 +160,5 @@ namespace idp.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        /*
-         * API
-         */
-        [HttpPost]
-        [AllowAnonymous]
-        public async Task<IActionResult> SignatureRequest([FromBody] SignRequestForm signRequestForm)
-        {
-
-            if (!HttpContext.Request.Headers.ContainsKey("Authorization"))
-            {
-                return Unauthorized();
-            }
-            try
-            {
-                StringValues authorizationHeader;
-                HttpContext.Request.Headers.TryGetValue("Authorization", out authorizationHeader);
-                var header = AuthenticationHeaderValue.Parse(authorizationHeader.ToString());
-                var token = header.Parameter;
-                if (token == null)
-                {
-                    return Unauthorized();
-                }
-                var APIToken = _secureDbAccess.GetAPITokenbyValue(token);
-                if (APIToken == null)
-                {
-                    return Unauthorized();
-                }
-                byte[] hash = Convert.FromBase64String(signRequestForm.HashBase64);
-                var signedItem = new SignedItem();
-                signedItem = await _registrySigner.SignFileHash(APIToken.Signer, hash, signRequestForm.Comment);
-                /*
-                 * Update the database
-                 */
-                await _secureDbAccess.AddSignedItem(signedItem);
-                return Ok();
-
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("Exception SignatureRequest API call " + JsonSerializer.Serialize(signRequestForm) + ex.ToString());
-                return Unauthorized();
-            }
-     
-        }
     }
 }

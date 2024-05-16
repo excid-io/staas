@@ -27,9 +27,7 @@ namespace idp.Controllers
 
 		[ActionName("openid-configuration")]
 		public IActionResult OpenIDConfiguration()
-		{
-			_logger.LogInformation(".well-known: openid-configuration requested");
-			
+		{		
 			var openIDConfiguration = new OpenIDConfiguration();
 			openIDConfiguration.Issuer = _iss;
 			openIDConfiguration.TokenEndpoint = _iss + "/Token";

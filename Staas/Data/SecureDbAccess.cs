@@ -1,6 +1,11 @@
 ﻿using Excid.Staas.Models;
+using idp.Controllers;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Primitives;
+using Staas.Security;
+using System.Net.Http.Headers;
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace Excid.Staas.Data
 {
@@ -8,6 +13,7 @@ namespace Excid.Staas.Data
     {
         private readonly StassDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ILogger<SecureDbAccess> _logger;
 
         public string? Signer
         {
@@ -17,10 +23,56 @@ namespace Excid.Staas.Data
             }
         }
 
-        public SecureDbAccess(StassDbContext context, IHttpContextAccessor httpContextAccessor) 
+        public string? SignerFromBearer
+        {
+            get
+            {
+                if(_httpContextAccessor.HttpContext == null)
+                {
+                    _logger.LogInformation("HttpContext is null");
+                    return null;
+                }
+                if (!_httpContextAccessor.HttpContext.Request.Headers.ContainsKey("Authorization"))
+                {
+                    _logger.LogInformation("Headers do not contain Authorization");
+                    return null;
+                }
+                try
+                {
+                    StringValues authorizationHeader;
+                    _httpContextAccessor.HttpContext.Request.Headers.TryGetValue("Authorization", out authorizationHeader);
+                    var header = AuthenticationHeaderValue.Parse(authorizationHeader.ToString());
+                    var token = header.Parameter;
+                    if (token == null)
+                    {
+                        return null;
+                    }
+                    var APIToken = _context.APITokens.Where(m => m.Token == token).FirstOrDefault();
+                    if (APIToken == null)
+                    {
+                        return null;
+                    }
+                    return APIToken.Signer;
+
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError("Exception in SignerFromBearer " + ex.ToString());
+                    return null;
+                }
+            }
+        }
+
+        public string? GetSignerFromBearer()
+        {
+            return SignerFromBearer;
+        }
+
+        public SecureDbAccess(ILogger<SecureDbAccess> logger, StassDbContext context, IHttpContextAccessor httpContextAccessor) 
         { 
             _context = context;
             _httpContextAccessor = httpContextAccessor;
+            _logger = logger;
         }
 
         /*
@@ -46,15 +98,23 @@ namespace Excid.Staas.Data
         /*
          * Get a signed item if it belongs to the user
          */
-        public SignedItem? GetSignedItem(int? id, AccessLevel accessLevel)
+        public SignedItem? GetSignedItem(int? id, UserAuthenticationMethod userAuthenticationMethod, AccessLevel accessLevel)
         {
             if (id is null) return null;
-            if (Signer is null)
+            string? signer = null;
+            if (userAuthenticationMethod == UserAuthenticationMethod.COOKIE)
+            {
+                signer = Signer;
+            }else if(userAuthenticationMethod == UserAuthenticationMethod.BEARER)
+            {
+                signer = SignerFromBearer;
+            }
+            if (signer is null)
             {
                 return null;
             }
 
-            var entry = _context.SignedItems.Where(m => m.Id == id && m.Signer == Signer).FirstOrDefault();
+            var entry = _context.SignedItems.Where(m => m.Id == id && m.Signer == signer).FirstOrDefault();
             return entry;
         }
 

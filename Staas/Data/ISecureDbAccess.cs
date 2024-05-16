@@ -4,8 +4,9 @@ namespace Excid.Staas.Data
 {
     public interface ISecureDbAccess
     {
+        public string? GetSignerFromBearer();
         public Task<bool> AddSignedItem(SignedItem entry);
-        public SignedItem? GetSignedItem(int? id, AccessLevel accessLevel = AccessLevel.WRITE);
+        public SignedItem? GetSignedItem(int? id, UserAuthenticationMethod userAuthenticationMethod= UserAuthenticationMethod.COOKIE,AccessLevel accessLevel = AccessLevel.WRITE);
         public Task<bool> DeleteSignedItem(int? id);
         public List<SignedItem>? ListSignedItems(AccessLevel accessLevel = AccessLevel.WRITE);
         public Task<bool> AddAPIToken(APIToken entry);
@@ -19,5 +20,11 @@ namespace Excid.Staas.Data
     {
         READ = 0,
         WRITE = 1
+    }
+
+    public enum UserAuthenticationMethod
+    {
+        COOKIE = 0,
+        BEARER = 1
     }
 }

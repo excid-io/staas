@@ -47,13 +47,17 @@ namespace idp.Controllers
 
 		public IActionResult Jwks()
 		{
-			_logger.LogInformation("/jwks: jwks requested");
             var JwkSet = new JwkSet();
 			JwkSet.Keys.Add(_publicJWK);
 			return Content(JsonSerializer.Serialize(JwkSet), "application/json");
 		}
 
-		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Verify()
+        {
+            return View();
+        }
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
 		public IActionResult Error()
 		{
 			string exceptionMessage = string.Empty;
