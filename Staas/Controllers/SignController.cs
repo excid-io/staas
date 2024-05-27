@@ -157,7 +157,7 @@ namespace idp.Controllers
                 _logger.LogWarning("A user tried to access Details of an authorized item");
                 throw new StaasException("Cannot access the requested item");
             }
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(List));
         }
 
     }
