@@ -1,4 +1,11 @@
 # Software Transparency as a Service
+
+## Credits
+This project was initially created by [ExcID](https://excid.io) and [Guardtime](https://guardtime.com/)
+in the context of the [DISGRID project](https://excid-io.github.io/discgrid/), which was funded by
+[SecurIT](https://securit-project.eu/) open call #2. 
+
+## About
 This repository includes the source code of our [Software Transparency as a Service](https://staas.excid.io/) platform. 
 STaaS uses [Fulcio CA](https://github.com/excid-io/discgrid-dev.git) for generating short-lived certificates
 bound to the email of a user. User authentication to the the STaaS platform is implemented
