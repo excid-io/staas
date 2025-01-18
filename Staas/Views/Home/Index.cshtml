@@ -6,22 +6,48 @@
         <div class="col-lg-6">
             <h1 class="display-5 fw-bold text-body-emphasis lh-1 mb-3">Software transparency as a service</h1>
             <p class="lead">
-                Quickly sign files using short-lived certificates bound to your email.
-                Certificates are generated using a private instance of the
-                <a class="text-decoration-none" href="https://docs.sigstore.dev/certificate_authority/overview/">Fulcio</a> CA.
-                Information about generated signatures is immutably recorded in the 
-                <a class="text-decoration-none" href="https://docs.sigstore.dev/logging/overview/">Rekor</a>
-                public transparency registry. Generated signatures can be easily verified
-                using the <a class="text-decoration-none" href="https://docs.sigstore.dev/signing/quickstart/">Cosign</a> utility.
+                STaaS is free and <a href="https://github.com/excid-io/staas">open-source</a> brought to you
+                by <a href="https://excid.io">ExcID</a>.
             </p>
             <p>
-                Brought to you by <a class="text-decoration-none" href="https://excid.io">ExcID</a> and <a class="text-decoration-none" href="https://guardtime.com/">Guardtime</a>
-                in the context of the <a class="text-decoration-none" href="https://excid-io.github.io/discgrid/">DISCGRID</a> project.
-            </p> 
+                Quickly sign artifacts, such as binaries, documents, and pictures,
+                using short-lived certificates bound to your identity.
+                Signatures are generated using one-time keys and they are record
+                in a public, auditable transparency registry. Your artifacts are
+                never transmitted to our platform.<br/>
+            </p>
+            <p>
+                Sign up now and start using STaaS for free. We respect your privacy and we
+                will use your email only for authentication purposes. 
+            </p>
             <div class="d-grid gap-2 d-md-flex justify-content-md-start">
                 <a class="btn btn-primary btn-lg px-4 me-md-2 fw-bold" asp-action="Index" asp-controller="Sign">Try it out</a>
+                <a href="https://github.com/excid-io/staas" class="text-decoration-none pt-2">
+                    <img src="/img/github.svg" alt="github" width="30" height="30">
+                </a>
             </div>
         </div>
+    </div>
+    <div class="row">
+        <h1>How it works</h1>
+        <ol class="px-5">
+            <li>Login and select a file to sign. ExcID <u>never learns the contents of the file</u>. </li>
+            <li>STaaS generates a short-lived certificate bound to your email address
+                using an instance of
+                <a class="text-decoration-none" href="https://docs.sigstore.dev/certificate_authority/overview/">Fulcio</a> CA
+                hosted by ExcID. 
+            </li>
+            <li>
+                Information about generated signatures is immutably recorded in the
+                <a class="text-decoration-none" href="https://docs.sigstore.dev/logging/overview/">Rekor</a>
+                public transparency registry.
+            </li>
+            <li>
+                Generated signatures can be easily verified
+                using the <a class="text-decoration-none" href="https://docs.sigstore.dev/signing/quickstart/">Cosign</a> utility.
+            </li>
+        </ol> 
+        <p>For more information read <a href="https://excid-io.github.io/staas-docs/">STaaS documentation</a></p>     
     </div>
 
 
