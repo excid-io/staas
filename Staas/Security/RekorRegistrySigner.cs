@@ -43,7 +43,7 @@ namespace Staas.Security
             signedItem.Signer = signer;
             signedItem.Comment = comment;
 
-            var ecdsa = ECDsa.Create(); // generate asymmetric key pair
+            var ecdsa = ECDsa.Create(ECCurve.NamedCurves.nistP256); // generate asymmetric key pair
             var httpClient = new HttpClient();
             httpClient.Timeout = TimeSpan.FromSeconds(2);
             /*
@@ -141,7 +141,9 @@ namespace Staas.Security
                     }
                 };
                 var postRequest = await httpClient.PostAsJsonAsync("https://rekor.sigstore.dev" + "/api/v1/log/entries", hashedRekord);
-                var entries = await postRequest.Content.ReadFromJsonAsync<Dictionary<string, LogEntry>>();
+                string responseContent = await postRequest.Content.ReadAsStringAsync();
+                //_logger.LogError("Received from  Transparency Registry:" + responseContent);
+                var entries = JsonSerializer.Deserialize<Dictionary<string, LogEntry>>(responseContent);
                 //assume a single entry
                 if (entries != null && entries.Count > 0)
                 {

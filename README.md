@@ -18,6 +18,7 @@ and can be verified using [Cosign](https://docs.sigstore.dev/signing/quickstart)
 
 ## Preparation
 ### Fulcio
+#### Preparation
 We will use a self-hosted version of [Fulcio CA](https://github.com/excid-io/discgrid-dev.git)
 
 Particularly, we will use [Fulcio v1.4.4](https://github.com/sigstore/fulcio/releases/tag/v1.4.4)
@@ -26,7 +27,7 @@ CA certificate and a key using the following command (**make sure you are using 
 
 ```
  openssl req -x509 \
-        -newkey ed25519 \
+        -newkey ec -pkeyopt ec_paramgen_curve:prime256v1 \
         -sha256 \
         -keyout fulcio-key.pem \
         -out fulcio-cert.pem \
@@ -40,6 +41,7 @@ Then,  modify the configuration in `/etc/fulcio-config/config.json` to include S
 platform in its least of IdPs. You should add the following lines (replace 
 `https://staas.excid.io` with the URL of you STaaS deployment).
 
+#### Use Fulcio binary
 Add the following lines
 ```
 {
@@ -92,7 +94,7 @@ openssl genpkey -paramfile ecparam.pem -out idtoken-key.pem -aes-128-cbc -pass p
 Configure the IdP section with the path to the generated key and the used password. Moreover,
 configure the `iss` parameter with the URL of your deployment. 
 
-The final section is the `Sigstore` section. There, you should provide the URL to 
+The final section is the `Sigstore` section. There, you should providedontent the URL to 
 Fulcio, as well as the path to he Fulcio certificate generated previously. 
 
 As a next step you should prepare STaaS platform's database. This release of STaaS
