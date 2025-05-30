@@ -1,9 +1,15 @@
 # Software Transparency as a Service
 
 ## Credits
-This project was initially created by [ExcID](https://excid.io) and [Guardtime](https://guardtime.com/)
-in the context of the [DISGRID project](https://excid-io.github.io/discgrid/), which was funded by
-[SecurIT](https://securit-project.eu/) open call #2. 
+This project was initially created and maintained by [ExcID](https://excid.io).
+
+### Acknowledgements
+* [Guardtime](https://guardtime.com/) contributed to the initial version of the project
+* [SecurIT](https://securit-project.eu/) project provided financial support through
+the [DISGRID](https://excid-io.github.io/discgrid/) open call #2 project
+* [aerOS](https://aeros-project.eu) project provides financial support through the
+SecCon open call project.
+
 
 ## About
 This repository includes the source code of our [Software Transparency as a Service](https://staas.excid.io/) platform. 
