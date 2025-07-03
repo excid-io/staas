@@ -44,6 +44,7 @@ namespace idp.Controllers
             return View(signedItems);
 		}
 
+        [AllowAnonymous]
         public IActionResult Certificate()
         {
 
