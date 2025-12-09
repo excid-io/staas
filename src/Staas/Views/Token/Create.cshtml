@@ -1,0 +1,33 @@
+﻿@using Excid.Staas.Models
+@model APIToken
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Sign" asp-action="Index">Home</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Token" asp-action="Index">API tokens</a></li>
+        <li class="breadcrumb-item active">Create</li>
+    </ol>
+</nav>
+<h2 class="fw-normal">New API token</h2>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form enctype="multipart/form-data" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group mb-3">
+                <label asp-for="Description" class="control-label mb-1"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <button type="submit" class="btn btn-primary mx-2">Save</button>
+                <a class="btn btn-link" asp-action="Index" role="button">Cancel</a>
+            </div>
+        </form>
+    </div>
+    <div class="col-md-4 border border-primary-subtle rounded ms-4 ps-4 pt-4 bg-primary-subtle bg-gradient">
+        <ul>
+            <li>Add a description to be displayed in the list of API tokens</li>
+        </ul>
+    </div>
+</div>
