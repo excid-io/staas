@@ -35,7 +35,18 @@ namespace Staas.Controllers
             }
             try
             {
-                byte[] hash = Convert.FromBase64String(signRequestForm.HashBase64);
+                byte[] hash;
+                if (signRequestForm.HashBase64 != String.Empty)
+                {
+                    hash = Convert.FromBase64String(signRequestForm.HashBase64);
+                } else if (signRequestForm.HashHex != String.Empty)
+                {
+                    hash = Convert.FromHexString(signRequestForm.HashHex);
+                }
+                else
+                {
+                    return StatusCode(500);
+                }
                 var signedItem = new SignedItem();
                 signedItem = await _registrySigner.SignFileHash(signer, hash, signRequestForm.Comment);
                 /*
