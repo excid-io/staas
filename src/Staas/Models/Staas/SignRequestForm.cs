@@ -10,5 +10,7 @@ namespace Excid.Staas.Models
 
         [Display(Name = "Comment")]
         public string Comment { get; set; } = string.Empty;
+
+        public string HashHex { get; set; } = string.Empty;
     }
 }
