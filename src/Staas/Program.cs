@@ -6,15 +6,19 @@ using Excid.Staas.Data;
 using Excid.Staas.Security;
 using Staas.Security;
 
+
 var builder = WebApplication.CreateBuilder(args);
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' was not found.");
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddSingleton<IJwtSigner, FileJwtSigner>();
+builder.Services.AddSingleton<IJwtSigner, OneTimeKeyJwtSigner>();
 builder.Services.AddSingleton<IRegistrySigner, RekorRegistrySigner>();
 builder.Services.AddScoped<ISecureDbAccess, SecureDbAccess>();
-builder.Services.AddDbContext<StassDbContext>(options => options.UseSqlite("Data Source=staas.db"));
+builder.Services.AddDbContext<StassDbContext>(options =>
+    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = "cookies";

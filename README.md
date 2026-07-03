@@ -82,19 +82,12 @@ You should provide information about your OpenId provider of preference (e.g., G
 an instance of Keycloak).
 
 The second section the is the `IdP` section. STaaS platform generates and signs an `identity token`
-used for obtaining a certificate from Fulcio. For this reason you need to generate a signing key.
-This key can be generated using OpenSSL using the following command (**make sure you are using a proper password**):
+used for obtaining a certificate from Fulcio. The token signing key is generated on the
+fly and it is deleted after use. Configure the IdP section with the `iss` parameter 
+with value equal to the URL of your deployment. 
 
-```
-openssl ecparam -out ecparam.pem -name prime256v1
-openssl genpkey -paramfile ecparam.pem -out idtoken-key.pem -aes-128-cbc -pass pass:"1234564"
-```
-
-Configure the IdP section with the path to the generated key and the used password. Moreover,
-configure the `iss` parameter with the URL of your deployment. 
-
-The final section is the `Sigstore` section. There, you should providedontent the URL to 
-Fulcio, as well as the path to he Fulcio certificate generated previously. 
+The final section is the `Sigstore` section. There, you should provide the URL to 
+Fulcio, as well as the path to the Fulcio certificate generated previously. 
 
 As a next step you should prepare STaaS platform's database. This release of STaaS
 platform uses SQLite so no additional server needs to be installed. The database
