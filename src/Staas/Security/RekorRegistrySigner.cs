@@ -45,18 +45,20 @@ namespace Staas.Security
 
             var ecdsa = ECDsa.Create(ECCurve.NamedCurves.nistP256); // generate asymmetric key pair
             var httpClient = new HttpClient();
-            httpClient.Timeout = TimeSpan.FromSeconds(2);
+            //httpClient.Timeout = TimeSpan.FromSeconds(2);
             /*
 			 * Prepare OIDC token
 			 */
             var iat = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             var exp = DateTimeOffset.UtcNow.AddDays(1).ToUnixTimeSeconds();
             var iss = _configuration.GetValue<string>("IdP:iss");
+            string jti = Guid.NewGuid().ToString();
             var jwtpayload = new JwtPayload()
                 {
                     { "iat", iat },
                     { "exp", exp },
                     { "iss", iss ?? ""},
+                    { "jti",jti },
                     {"aud", "sigstore" },
                     {"email_verified", true },
                     {"email", signer }
@@ -94,8 +96,12 @@ namespace Staas.Security
             }
             catch (Exception ex)
             {
+                
                 _logger.LogError("Exception in requesting certificate:" + ex.ToString());
                 throw new StaasException("Error in requesting certificate");
+            }finally
+            {
+                _jwtSigner.TokenUsed(jti);
             }
 
             /*

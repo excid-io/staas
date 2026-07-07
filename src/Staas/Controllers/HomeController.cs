@@ -1,12 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using System.Text.Json;
-using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authentication;
-using System.Security.Cryptography;
+﻿using Excid.Oidc.Models;
 using Excid.Staas.Models;
-using Excid.Oidc.Models;
+using Excid.Staas.Security;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Cryptography;
+using System.Text.Json;
 
 namespace idp.Controllers
 {
@@ -15,28 +16,13 @@ namespace idp.Controllers
 	{
 		private readonly ILogger<HomeController> _logger;
 		private readonly IConfiguration _configuration;
-		private readonly JsonWebKey _publicJWK;
+        private readonly IJwtSigner _jwtSigner;
 
-
-        public HomeController(IConfiguration configuration, ILogger<HomeController> logger)
+        public HomeController(IConfiguration configuration, ILogger<HomeController> logger, IJwtSigner jwtSigner)
 		{
 			_logger = logger;
 			_configuration = configuration;
-			_publicJWK = new JsonWebKey();
-            string privateKeyPem = _configuration.GetValue<string>("IdP:PrivateKeyPem") ?? "";
-            string privateKeyPemPassord = _configuration.GetValue<string>("IdP:PrivateKeyPemPassord") ?? "";
-            try
-            {
-                string pemKey = System.IO.File.ReadAllText(privateKeyPem);
-                var signingecdsa = ECDsa.Create();
-                signingecdsa.ImportFromEncryptedPem(new System.ReadOnlySpan<char>(pemKey.ToCharArray()), privateKeyPemPassord);
-                _publicJWK = JsonWebKeyConverter.ConvertFromECDsaSecurityKey(new ECDsaSecurityKey(signingecdsa));
-                _publicJWK.D = null;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("Exception in Homecontroller:" + ex.ToString());
-            }
+			_jwtSigner = jwtSigner;
         }
 
 		public IActionResult Index()
@@ -47,9 +33,7 @@ namespace idp.Controllers
 
 		public IActionResult Jwks()
 		{
-            var JwkSet = new JwkSet();
-			JwkSet.Keys.Add(_publicJWK);
-			return Content(JsonSerializer.Serialize(JwkSet), "application/json");
+			return Content(JsonSerializer.Serialize(_jwtSigner.GetJwkSet()), "application/json");
 		}
 
         public IActionResult Verify()
