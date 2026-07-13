@@ -148,7 +148,7 @@ namespace Staas.Security
                 };
                 var postRequest = await httpClient.PostAsJsonAsync("https://rekor.sigstore.dev" + "/api/v1/log/entries", hashedRekord);
                 string responseContent = await postRequest.Content.ReadAsStringAsync();
-                //_logger.LogError("Received from  Transparency Registry:" + responseContent);
+                _logger.LogError("Received from  Transparency Registry:" + responseContent);
                 var entries = JsonSerializer.Deserialize<Dictionary<string, LogEntry>>(responseContent);
                 //assume a single entry
                 if (entries != null && entries.Count > 0)
