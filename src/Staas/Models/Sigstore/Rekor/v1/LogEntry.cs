@@ -8,11 +8,11 @@ namespace Excid.Sigstore.Rekor.v1.Models
         [JsonPropertyName("logID")]
         public string LogID { get; set; } = string.Empty;
         [JsonPropertyName("logIndex")]
-        public int LogIndex { get; set; }
+        public long LogIndex { get; set; }
         [JsonPropertyName("body")]
         public string Body { get; set; } = string.Empty;
         [JsonPropertyName("integratedTime")]
-        public int IntegratedTime { get; set; }
+        public long IntegratedTime { get; set; }
         [JsonPropertyName("attestation")]
         public Attestation? Attestation { get; set; } = null;
         [JsonPropertyName("verification")]
@@ -37,11 +37,11 @@ namespace Excid.Sigstore.Rekor.v1.Models
 	public class InclusionProof
 	{
         [JsonPropertyName("logIndex")]
-        public int LogIndex { get; set; }
+        public long LogIndex { get; set; }
         [JsonPropertyName("rootHash")]
         public string RootHash { get; set; } = string.Empty;
         [JsonPropertyName("treeSize")]
-        public int TreeSize { get; set; }
+        public long TreeSize { get; set; }
         [JsonPropertyName("hashes")]
         public List<string> Hashes { get; set; } = new List<string>();
         [JsonPropertyName("checkPoint")]

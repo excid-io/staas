@@ -26,9 +26,9 @@ namespace Excid.Sigstore.Cosign.v1.Models
         [JsonPropertyName("body")]
         public string Body { get; set; } = string.Empty;
         [JsonPropertyName("integratedTime")]
-        public int IntegratedTime { get; set; }
+        public long IntegratedTime { get; set; }
         [JsonPropertyName("logIndex")]
-        public int LogIndex { get; set; }
+        public long LogIndex { get; set; }
         [JsonPropertyName("logID")]
         public string LogId { get; set; } = string.Empty;
     }
