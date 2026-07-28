@@ -1,53 +1,271 @@
-﻿
-    <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
-        <div class="col-10 col-sm-8 col-lg-6">
-            <img src="/img/overview.png" class="d-block mx-lg-auto img-fluid" alt="STaaS" width="500" loading="lazy">
-        </div>
-        <div class="col-lg-6">
-            <h1 class="display-5 fw-bold text-body-emphasis lh-1 mb-3">Software transparency as a service</h1>
-            <p class="lead">
-                STaaS is free and <a href="https://github.com/excid-io/staas">open-source</a> brought to you
-                by <a href="https://excid.io">ExcID</a>.
-            </p>
-            <p>
-                Quickly sign artifacts, such as binaries, documents, and pictures,
-                using short-lived certificates bound to your identity.
-                Signatures are generated using one-time keys and they are record
-                in a public, auditable transparency registry. Your artifacts are
-                never transmitted to our platform.<br/>
-            </p>
-            <p>
-                Sign up now and start using STaaS for free. We respect your privacy and we
-                will use your email only for authentication purposes. 
-            </p>
-            <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-                <a class="btn btn-primary btn-lg px-4 me-md-2 fw-bold" asp-action="Index" asp-controller="Sign">Try it out</a>
-                <a href="https://github.com/excid-io/staas" class="text-decoration-none pt-2">
-                    <img src="/img/github.svg" alt="github" width="30" height="30">
-                </a>
+<style>
+    .home-page {
+        color: #162033;
+    }
+
+    .home-hero {
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(22, 32, 51, .08);
+        border-radius: 8px;
+        background:
+            radial-gradient(circle at 12% 10%, rgba(27, 110, 194, .14), transparent 30%),
+            linear-gradient(135deg, #f8fbff 0%, #eef5f9 54%, #f7faf7 100%);
+        box-shadow: 0 24px 70px rgba(22, 32, 51, .10);
+    }
+
+    .hero-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: .5rem;
+        width: fit-content;
+        border: 1px solid rgba(27, 110, 194, .22);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, .72);
+        color: #1b5f9f;
+        font-size: .82rem;
+        font-weight: 700;
+        letter-spacing: 0;
+        padding: .42rem .78rem;
+    }
+
+    .hero-title {
+        max-width: 12ch;
+        font-size: clamp(2.5rem, 4.2vw, 4.8rem);
+        line-height: .98;
+        letter-spacing: 0;
+    }
+
+    .hero-copy {
+        max-width: 38rem;
+        color: #4f5f73;
+        font-size: 1.12rem;
+    }
+
+    .hero-panel {
+
+    }
+
+    .hero-panel img {
+        border-radius: 8px;
+    }
+
+    .feature-card,
+    .step-card {
+        height: 100%;
+        border: 1px solid rgba(22, 32, 51, .09);
+        border-radius: 8px;
+        background: #fff;
+        box-shadow: 0 14px 34px rgba(22, 32, 51, .06);
+    }
+
+    .feature-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.75rem;
+        height: 2.75rem;
+        border-radius: 8px;
+        background: #e9f3ff;
+    }
+
+    .feature-icon img {
+        width: 1.35rem;
+        height: 1.35rem;
+    }
+
+    .section-kicker {
+        color: #1b6ec2;
+        font-size: .82rem;
+        font-weight: 800;
+        letter-spacing: 0;
+        text-transform: uppercase;
+    }
+
+    .step-number {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+        width: 2.25rem;
+        height: 2.25rem;
+        border-radius: 50%;
+        background: #162033;
+        color: #fff;
+        font-weight: 800;
+    }
+
+    .docs-band {
+        border: 1px solid rgba(22, 32, 51, .08);
+        border-radius: 8px;
+        background: #f6f9fb;
+    }
+
+    .btn-hero-primary {
+        box-shadow: 0 12px 24px rgba(27, 110, 194, .22);
+    }
+
+    @@media (max-width: 767.98px) {
+        .hero-title {
+            max-width: 100%;
+        }
+
+        .home-hero {
+            border-radius: 0;
+            margin-left: calc(var(--bs-gutter-x) * -.5);
+            margin-right: calc(var(--bs-gutter-x) * -.5);
+        }
+    }
+</style>
+<div class="home-page">
+    <section class="home-hero px-4 px-lg-5 py-5 mb-5">
+        <div class="row flex-lg-row-reverse align-items-center g-5">
+            <div class="col-lg-6">
+                <div class="hero-panel p-3 p-md-4">
+                    <img src="/img/overview.png" class="d-block w-100 img-fluid" alt="STaaS signing workflow overview" loading="lazy">
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="hero-eyebrow mb-3">
+                    <span>Keyless signing</span>
+                </div>
+                <h1 class="hero-title fw-bold text-body-emphasis mb-4">Signing and Transparency as a Service</h1>
+                <p class="hero-copy lead mb-4">
+                    STaaS is an <a href="https://github.com/excid-io/staas">open-source</a> service from
+                    <a href="https://excid.io">ExcID</a> for signing data with your login, recording signing events
+                    in a transparency registry, and verifying using open-source tools. All operations can be easily integrated
+                    and automated using our REST API.
+                </p>
+                <div class="d-grid gap-3 d-sm-flex align-items-center mb-4">
+                    <a class="btn btn-primary btn-lg px-4 fw-bold btn-hero-primary" asp-action="Index" asp-controller="Sign">Try it out</a>
+                    <a href="https://github.com/excid-io/staas" class="btn btn-outline-dark btn-lg px-4">
+                        <img src="/img/github.svg" alt="" width="22" height="22" class="me-2">
+                        GitHub
+                    </a>
+                </div>
+                <div class="row g-3 small text-secondary">
+                    <div class="col-sm-4">
+                        <strong class="d-block text-body-emphasis">Privacy-first</strong>
+                        STaaS never learns the contents of your file.
+                    </div>
+                    <div class="col-sm-4">
+                        <strong class="d-block text-body-emphasis">No key custody</strong>
+                        Sign without managing private signing keys.
+                    </div>
+                    <div class="col-sm-4">
+                        <strong class="d-block text-body-emphasis">Verifiable</strong>
+                        Trace signatures and detect suspicious activity.
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="row">
-        <h1>How it works</h1>
-        <ol class="px-5">
-            <li>Login and select a file to sign. ExcID <u>never learns the contents of the file</u>. </li>
-            <li>STaaS generates a short-lived certificate bound to your email address
-                using an instance of
-                <a class="text-decoration-none" href="https://docs.sigstore.dev/certificate_authority/overview/">Fulcio</a> CA
-                hosted by ExcID. 
-            </li>
-            <li>
-                Information about generated signatures is immutably recorded in the
-                <a class="text-decoration-none" href="https://docs.sigstore.dev/logging/overview/">Rekor</a>
-                public transparency registry.
-            </li>
-            <li>
-                Generated signatures can be easily verified
-                using the <a class="text-decoration-none" href="https://docs.sigstore.dev/cosign/signing/overview/">Cosign</a> utility.
-            </li>
-        </ol> 
-        <p>For more information read <a href="https://excid-io.github.io/staas-docs/">STaaS documentation</a></p>     
-    </div>
+    </section>
 
+    <section class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="feature-card p-4">
+                <div class="feature-icon mb-3">
+                    <img src="/img/sign.svg" alt="">
+                </div>
+                <h2 class="h5 fw-bold">Sign quickly</h2>
+                <p class="text-secondary mb-0">Use the Web UI or REST API to sign binaries, documents, images, and other release artifacts.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card p-4">
+                <div class="feature-icon mb-3">
+                    <img src="/img/activity.svg" alt="">
+                </div>
+                <h2 class="h5 fw-bold">Track every signature</h2>
+                <p class="text-secondary mb-0">Record signature information in a public transparency registry for later inspection and verification.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card p-4">
+                <div class="feature-icon mb-3">
+                    <img src="/img/key.svg" alt="">
+                </div>
+                <h2 class="h5 fw-bold">Deploy your way</h2>
+                <p class="text-secondary mb-0">Start with the hosted service, integrate with CI/CD, or run STaaS on premises with Docker Compose.</p>
+            </div>
+        </div>
+    </section>
 
+    <section class="mb-5">
+        <div class="row align-items-end gy-3 mb-4">
+            <div class="col-lg-7">
+                <div class="section-kicker mb-2">How it works</div>
+                <h2 class="display-6 fw-bold mb-0">A short, auditable path from file to signature.</h2>
+            </div>
+            <div class="col-lg-5">
+                <p class="text-secondary mb-0">
+                    STaaS combines short-lived certificates with public transparency logging, so each signature can be traced without exposing your file contents.
+                </p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="step-card p-4 d-flex gap-3">
+                    <span class="step-number">1</span>
+                    <div>
+                        <h3 class="h5 fw-bold">Choose a file</h3>
+                        <p class="text-secondary mb-0">Log in and select a file to sign. STaaS never learns the contents of the file.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="step-card p-4 d-flex gap-3">
+                    <span class="step-number">2</span>
+                    <div>
+                        <h3 class="h5 fw-bold">Sign</h3>
+                        <p class="text-secondary mb-0">
+                            STaaS generates an one-time used key pair and a short-lived certificate bound to your email address using an ExcID-hosted
+                            <a class="text-decoration-none" href="https://docs.sigstore.dev/certificate_authority/overview/">Fulcio</a> CA.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="step-card p-4 d-flex gap-3">
+                    <span class="step-number">3</span>
+                    <div>
+                        <h3 class="h5 fw-bold">Track</h3>
+                        <p class="text-secondary mb-0">
+                            Signature information is immutably recorded in the
+                            <a class="text-decoration-none" href="https://docs.sigstore.dev/logging/overview/">Rekor</a>
+                            public transparency registry.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="step-card p-4 d-flex gap-3">
+                    <span class="step-number">4</span>
+                    <div>
+                        <h3 class="h5 fw-bold">Verify</h3>
+                        <p class="text-secondary mb-0">
+                            Generated signatures can be verified with the
+                            <a class="text-decoration-none" href="https://docs.sigstore.dev/cosign/signing/overview/">Cosign</a>
+                            utility.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="docs-band p-4 p-md-5 mb-4">
+        <div class="row align-items-center gy-3">
+            <div class="col-lg-8">
+                <h2 class="h3 fw-bold mb-2">Build STaaS into your workflow</h2>
+                <p class="text-secondary mb-0">
+                    Learn how to use the REST API from your CI/CD system, verify signatures, and deploy STaaS on premises.
+                </p>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                <a class="btn btn-outline-primary btn-lg px-4" href="https://excid-io.github.io/staas-docs/">Read the documentation</a>
+            </div>
+        </div>
+    </section>
+</div>
